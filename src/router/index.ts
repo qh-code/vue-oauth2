@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
+import Sample from '../components/Sample.vue'
+import { validateAccess, oauthLoginCallback, oauthLogout } from '@/services/auth'
 
 Vue.use(VueRouter)
 
@@ -17,7 +19,21 @@ const routes: Array<RouteConfig> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+  },
+  {
+    path: '/sample',
+    name: 'Sample',
+    beforeEnter: validateAccess,
+    component: Sample
+  },
+  {
+    path: '/oauth-callback',
+    component: oauthLoginCallback
+  },
+  {
+    path: '/logout',
+    component: oauthLogout
+  },
 ]
 
 const router = new VueRouter({
