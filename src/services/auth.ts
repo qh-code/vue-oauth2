@@ -17,7 +17,7 @@ const ISSUER = AUTH_DOMAIN + "/v2.0";
 const API_SCOPE = "api://7a22a9b5-1f83-432f-8d30-ef4412294cdf/All";
 const AUTHORIZE_URL = AUTH_DOMAIN + "/oauth2/v2.0/authorize";
 const TOKEN_URL = AUTH_DOMAIN + "/oauth2/v2.0/token";
-const LOGOUT_URL = AUTH_DOMAIN + + "/oauth2/v2.0/logout";
+const LOGOUT_URL = AUTH_DOMAIN + "/oauth2/v2.0/logout";
 
 
 const oktaAuth = new OktaAuth({
