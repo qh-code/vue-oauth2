@@ -1,5 +1,11 @@
 # vue-sample
 
+## Login credentials
+
+`username_test`
+
+`password_testT1`
+
 ## Project setup
 ```
 npm install

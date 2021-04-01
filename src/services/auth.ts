@@ -10,7 +10,6 @@ import { Route } from 'vue-router';
 
 
 // PROVIDER SPECIFIC SETTINGS (i.e. MS Identity Platform Specifics)
-const TENANT_ID = "3cf25b33-a435-44bf-ab8c-f06c50292a1e";
 const CLIENT_ID = "6lt9cqgtupflbjc868d0i61ucv";
 const AUTH_DOMAIN = "https://vue-sample-1.auth.us-east-2.amazoncognito.com";
 // + TENANT_ID
