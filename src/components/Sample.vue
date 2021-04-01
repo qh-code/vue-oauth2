@@ -25,10 +25,11 @@ export default class Home extends Vue {
   public userName: string = "";
   public testResponse: string = "";
   public testEndpoint = TEST_ENDPOINT;
+  public claims: any = {};
 
   public mounted() {
     getUserInfo()
-      .then((userInfo) => (this.userName = userInfo.name ? userInfo.name : ""))
+      .then((userInfo) => {this.userName = userInfo.name ? userInfo.name : ""; this.claims = userInfo.claims; console.log(this.claims)})
       .catch(console.error);
 
     getAccessToken()
