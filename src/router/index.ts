@@ -1,12 +1,8 @@
-import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
-import Sample from '../components/Sample.vue'
 import { validateAccess, oauthLoginCallback, oauthLogout } from '@/services/auth'
 
-Vue.use(VueRouter)
-
-const routes: Array<RouteConfig> = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
@@ -15,16 +11,16 @@ const routes: Array<RouteConfig> = [
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
     path: '/sample',
     name: 'Sample',
     beforeEnter: validateAccess,
-    component: Sample
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/Sample.vue')
   },
   {
     path: '/oauth-callback',
@@ -33,12 +29,11 @@ const routes: Array<RouteConfig> = [
   {
     path: '/logout',
     component: oauthLogout
-  },
+  }
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   routes
 })
 

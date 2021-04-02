@@ -1,21 +1,55 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/sample">Sample</router-link>
-      <template v-if="isAuthenticated">
-        | <router-link to="/logout">Logout {{ userName }}</router-link>
-      </template>
-      <template v-if="!isAuthenticated">
-        | <a v-on:click="onLoginClick()" href="#">Login</a>
-      </template>
-    </div>
-    <router-view />
+  <div id="nav">
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link> |
+    <router-link to="/sample">Sample</router-link>
+    <template v-if="isAuthenticated">
+      | <router-link to="/logout">Logout {{ userName }}</router-link>
+    </template>
+    <template v-if="!isAuthenticated">
+      | <a v-on:click="onLoginClick()" href="#">Login</a>
+    </template>
+
   </div>
+  <router-view/>
 </template>
 
-<style>
+<script lang="ts">
+import { Vue } from 'vue-class-component';
+import {
+  getUserInfo,
+  isAuthenticated,
+  oauthLogin,
+  subscribeToAuthStateChanged,
+} from "./services/auth";
+
+export default class App extends Vue {
+  public userName = "";
+  public isAuthenticated = false;
+
+  public mounted() {
+    subscribeToAuthStateChanged((x) => this.authStateChanged());
+  }
+
+  public onLoginClick():void {
+    oauthLogin();
+  }
+
+  private authStateChanged() {
+    isAuthenticated().then(
+      (authenticated) => (this.isAuthenticated = authenticated)
+    );
+    getUserInfo()
+      .then((userInfo) => (this.userName = userInfo.name ? userInfo.name : ""))
+      .catch((x) => {
+        console.error(x);
+      });
+  }
+}
+
+</script>
+
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -26,50 +60,14 @@
 
 #nav {
   padding: 30px;
-}
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  a {
+    font-weight: bold;
+    color: #2c3e50;
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 }
 </style>
-
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import {
-  getUserInfo,
-  isAuthenticated,
-  oauthLogin,
-  subscribeToAuthStateChanged,
-} from "./services/auth";
-
-@Component({
-  components: {},
-})
-export default class AppRoot extends Vue {
-  public userName = "";
-  public isAuthenticated = false;
-
-  public mounted() {
-    subscribeToAuthStateChanged((x) => this.authStateChanged());
-  }
-
-  public onLoginClick() {
-    console.log("62");
-    oauthLogin();
-  }
-
-  private authStateChanged() {
-    isAuthenticated().then(
-      (authenticated) => (this.isAuthenticated = authenticated)
-    );
-    getUserInfo()
-      .then((userInfo) => (this.userName = userInfo.name ? userInfo.name : ""))
-      .catch((x) => {});
-  }
-}
-</script>

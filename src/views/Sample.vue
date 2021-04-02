@@ -13,22 +13,22 @@
 
 <script lang="ts">
 import { getAccessToken, getUserInfo, UserInfo } from "@/services/auth";
-import { Component, Vue } from "vue-property-decorator";
+import { Options, Vue } from "vue-class-component";
 
 //const TEST_ENDPOINT = "http://localhost:8000/age-units";
 const TEST_ENDPOINT = "http://localhost:8000/access-token-payload-test";
 
-@Component({
-  components: {},
+@Options({
+  components: {}
 })
 export default class Home extends Vue {
-  public userName: string = "";
-  public testResponse: string = "";
+  public userName= "";
+  public testResponse = "";
   public testEndpoint = TEST_ENDPOINT;
 
   public mounted() {
     getUserInfo()
-      .then((userInfo) => (this.userName = userInfo.name ? userInfo.name : ""))
+      .then((userInfo) => {this.userName = userInfo.name ? userInfo.name : "";})
       .catch(console.error);
 
     getAccessToken()

@@ -5,9 +5,6 @@ import {
     AuthState
 } from '@okta/okta-auth-js';
 import fetchRequest from '@okta/okta-auth-js/lib/fetch/fetchRequest';
-import { Route } from 'vue-router';
-
-
 
 // PROVIDER SPECIFIC SETTINGS (i.e. MS Identity Platform Specifics)
 const TENANT_ID = "3cf25b33-a435-44bf-ab8c-f06c50292a1e";
@@ -27,8 +24,9 @@ const oktaAuth = new OktaAuth({
     tokenUrl: TOKEN_URL,
     redirectUri: location.origin + "/oauth-callback",
     logoutUrl: LOGOUT_URL,
-    postLogoutRedirectUri: location.origin,
-    scopes: ['openid', 'profile', API_SCOPE],
+    // postLogoutRedirectUri: location.origin,
+    scopes: ['openid', 'profile'],
+    // scopes: ['openid', 'profile', API_SCOPE],
     responseType: 'code',
     pkce: true,
     //devMode: true,
@@ -40,9 +38,9 @@ const oktaAuth = new OktaAuth({
             // we put it there (having DEFAULT_CODE_CHALENGE_METHOD) before anyone notice
             ? fetchRequest(method, url, Object.assign(options, { withCredentials: false }))
                 .then(resp => {
-                    var respText = resp.responseText;
+                    let respText = resp.responseText;
                     if (respText && Object.prototype.toString.call(respText) === '[object String]') {
-                        var resObj: any = JSON.parse(respText);
+                        const resObj: any = JSON.parse(respText);
                         if (!resObj['code_challenge_methods_supported']) {
                             resObj['code_challenge_methods_supported'] = [DEFAULT_CODE_CHALLENGE_METHOD];
                             respText = JSON.stringify(resObj);
@@ -57,7 +55,7 @@ const oktaAuth = new OktaAuth({
     restoreOriginalUri: async (oktaAuth, originalUri) => { router.replace({ path: originalUri }) }
 })
 
-export function validateAccess(to: Route, from: Route, next: Function) {
+export function validateAccess(to: any, from: any, next: any) {
     oktaAuth.isAuthenticated()
         .then(authenticated => {
             if (authenticated) {
@@ -76,7 +74,8 @@ export function oauthLogin() {
         .then(authenticated => {
             if (!authenticated) {
                 oktaAuth.tokenManager.clear();
-                oktaAuth.setOriginalUri(router.currentRoute.path);
+                // router.currentRoute.path
+                oktaAuth.setOriginalUri(router.currentRoute.value.path);
                 oktaAuth.token.getWithRedirect();
             }
         })
@@ -86,7 +85,9 @@ export function oauthLogin() {
 
 export function oauthLoginCallback() {
     oktaAuth.token.parseFromUrl()
-        .then(tokens => oktaAuth.handleLoginRedirect(tokens.tokens))
+        .then(tokens => {
+            oktaAuth.handleLoginRedirect(tokens.tokens);
+        })
         .catch(console.error);
 }
 
@@ -96,7 +97,7 @@ export function isAuthenticated(): Promise<boolean> {
 
 export async function getIdToken(): Promise<string> {
     return oktaAuth.isAuthenticated()
-        .then(x => oktaAuth.getIdToken())
+        .then(() => oktaAuth.getIdToken())
         .then(token => {
             if (!token)
                 throw new Error("no id_token");
@@ -129,8 +130,13 @@ export async function getUserInfo(): Promise<UserInfo> {
 export async function oauthLogout(): Promise<void> {
     return oktaAuth.isAuthenticated()
         .then(authenticated => {
-            if (authenticated)
-                oktaAuth.signOut({ revokeAccessToken: false, revokeRefreshToken: false });
+            if (authenticated) {
+                oktaAuth.tokenManager.clear();
+                window.location.replace(LOGOUT_URL +  "?client_id=" + CLIENT_ID + "&logout_uri=http://localhost:8080/");
+                
+                // oktaAuth.signOut({ revokeAccessToken: false, revokeRefreshToken: false });
+            }
+            
         })
         .catch(console.error)
 }
