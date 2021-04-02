@@ -1,13 +1,9 @@
-import router from '@/router';
 import {
     OktaAuth,
     DEFAULT_CODE_CHALLENGE_METHOD,
     AuthState
-} from '@okta/okta-auth-js';
-import fetchRequest from '@okta/okta-auth-js/lib/fetch/fetchRequest';
-import { Route } from 'vue-router';
-
-
+} from '../node_modules/@okta/okta-auth-js';
+import fetchRequest from '../node_modules/@okta/okta-auth-js/lib/fetch/fetchRequest';
 
 // PROVIDER SPECIFIC SETTINGS (i.e. MS Identity Platform Specifics)
 const TENANT_ID = "3cf25b33-a435-44bf-ab8c-f06c50292a1e";
@@ -25,9 +21,9 @@ const oktaAuth = new OktaAuth({
     clientId: CLIENT_ID,
     authorizeUrl: AUTHORIZE_URL,
     tokenUrl: TOKEN_URL,
-    redirectUri: location.origin + "/oauth-callback",
+    redirectUri: "/oauth-callback",
     logoutUrl: LOGOUT_URL,
-    postLogoutRedirectUri: location.origin,
+    postLogoutRedirectUri: "/oauth-callback",
     scopes: ['openid', 'profile', API_SCOPE],
     responseType: 'code',
     pkce: true,
@@ -42,7 +38,7 @@ const oktaAuth = new OktaAuth({
                 .then(resp => {
                     var respText = resp.responseText;
                     if (respText && Object.prototype.toString.call(respText) === '[object String]') {
-                        var resObj: any = JSON.parse(respText);
+                        var resObj = JSON.parse(respText);
                         if (!resObj['code_challenge_methods_supported']) {
                             resObj['code_challenge_methods_supported'] = [DEFAULT_CODE_CHALLENGE_METHOD];
                             respText = JSON.stringify(resObj);
@@ -54,10 +50,13 @@ const oktaAuth = new OktaAuth({
             // and this to force other calls to be without credentials (so no need for trudted origin - which MSIdP does not allow to set)    
             : fetchRequest(method, url, Object.assign(options, { withCredentials: false }))),
 
-    restoreOriginalUri: async (oktaAuth, originalUri) => { router.replace({ path: originalUri }) }
+    restoreOriginalUri: async (oktaAuth, originalUri) => { 
+        // router.replace({ path: originalUri }) 
+    }
 })
 
-export function validateAccess(to: Route, from: Route, next: Function) {
+export function validateAccess(to, from, next) {
+
     oktaAuth.isAuthenticated()
         .then(authenticated => {
             if (authenticated) {
@@ -74,9 +73,10 @@ export function validateAccess(to: Route, from: Route, next: Function) {
 export function oauthLogin() {
     oktaAuth.isAuthenticated()
         .then(authenticated => {
+            console.log(authenticated);
             if (!authenticated) {
                 oktaAuth.tokenManager.clear();
-                oktaAuth.setOriginalUri(router.currentRoute.path);
+                oktaAuth.setOriginalUri("router.currentRoute.path");
                 oktaAuth.token.getWithRedirect();
             }
         })
@@ -85,16 +85,43 @@ export function oauthLogin() {
 
 
 export function oauthLoginCallback() {
-    oktaAuth.token.parseFromUrl()
-        .then(tokens => oktaAuth.handleLoginRedirect(tokens.tokens))
-        .catch(console.error);
+    if (oktaAuth.token) {
+        console.warn("in oktaAuth.token")
+        // oktaAuth.token.parseFromUrl()
+        //     .then(tokens => oktaAuth.handleLoginRedirect(tokens.tokens))
+        //     .catch(console.error);
+    }
+    
+    // BaseTokenAPI
+    // decode(token: string): JWTObject;
+    // prepareTokenParams(params: TokenParams): Promise<TokenParams>;
+    // exchangeCodeForTokens(params: TokenParams, urls?: CustomUrls): Promise<TokenResponse>;
+    
+
+    // getUserInfo(accessToken?: AccessToken, idToken?: IDToken): Promise<UserClaims>;
+    // getWithRedirect: GetWithRedirectAPI;
+    // parseFromUrl: ParseFromUrlInterface;
+    // getWithoutPrompt(params?: TokenParams): Promise<TokenResponse>;
+    // getWithPopup(params?: TokenParams): Promise<TokenResponse>;
+    // revoke(token: RevocableToken): Promise<object>;
+    // renew(token: Token): Promise<Token>;
+    // renewTokens(): Promise<Tokens>;
+    // verify(token: IDToken, params?: object): Promise<IDToken>;
+    // isLoginRedirect(): boolean;
+
+
+
+    // oktaAuth.token.parseFromUrl()
+    //     .then(tokens => oktaAuth.handleLoginRedirect(tokens.tokens))
+    //     .catch(console.error);
 }
 
-export function isAuthenticated(): Promise<boolean> {
+export async function isAuthenticated() {
     return oktaAuth.isAuthenticated()
+        .then(() => {});
 }
 
-export async function getIdToken(): Promise<string> {
+export async function getIdToken() {
     return oktaAuth.isAuthenticated()
         .then(x => oktaAuth.getIdToken())
         .then(token => {
@@ -104,7 +131,7 @@ export async function getIdToken(): Promise<string> {
         })
 }
 
-export async function getAccessToken(): Promise<string> {
+export async function getAccessToken() {
     await oktaAuth.isAuthenticated()
     const token = oktaAuth.getAccessToken();
     if (!token)
@@ -112,13 +139,7 @@ export async function getAccessToken(): Promise<string> {
     return token;
 }
 
-export interface UserInfo {
-    sub: string,
-    name: string | undefined,
-    email: string | undefined
-}
-
-export async function getUserInfo(): Promise<UserInfo> {
+export async function getUserInfo() {
     return oktaAuth.isAuthenticated()
         .then(x => oktaAuth.authStateManager.getAuthState().idToken)
         .then(idToken => { if (!idToken) throw new Error("not authenticated (no id_token)"); return idToken; })
@@ -126,7 +147,8 @@ export async function getUserInfo(): Promise<UserInfo> {
         .then(userClaims => ({ sub: userClaims.sub, name: userClaims.name, email: userClaims.email }))
 }
 
-export async function oauthLogout(): Promise<void> {
+export async function oauthLogout() {
+   
     return oktaAuth.isAuthenticated()
         .then(authenticated => {
             if (authenticated)
@@ -135,20 +157,19 @@ export async function oauthLogout(): Promise<void> {
         .catch(console.error)
 }
 
+let handlers = []
 
-
-let handlers: ((isAuthenticated: boolean) => void)[] = []
-
-function handleAuthStateChange(authState: AuthState) {
+function handleAuthStateChange(authState) {
     handlers.forEach(handler => handler(authState.isAuthenticated ? true : false))
 }
 
-oktaAuth.authStateManager.subscribe(handleAuthStateChange);
-
-export function subscribeToAuthStateChanged(handler: (isAuthenticated: boolean) => void): void {
-    handlers.push(handler);
+if (oktaAuth.authStateManager) {
+    oktaAuth.authStateManager.subscribe(handleAuthStateChange);
 }
 
-export function unSubscribeFromAuthStateChanged(handler: any): void {
-    handlers = handlers.filter(h => h != handler)
+export function subscribeToAuthStateChanged(handler) {
+    handlers.push(handler);
+}
+export function unSubscribeFromAuthStateChanged(handler) {
+    handlers = handlers.filter(h => h != handler);
 }
