@@ -5,9 +5,9 @@
         <li>
           <NuxtLink class="button--green" to="/">Home</NuxtLink>
           <!-- <NuxtLink class="button--green" to="/oauth-callback">Oauth callback</NuxtLink> -->
-          <NuxtLink class="button--green" to="/user-info" v-if="isLoggedIn">User info</NuxtLink>
-          <a class="button--green" v-on:click="onLoginClick()" v-if="!isLoggedIn">Login</a>
-          <a class="button--green" v-on:click="onLogoutClick()" v-if="isLoggedIn">Log out {{ userName }}</a>
+          <NuxtLink class="button--green" to="/user-info" v-if="isAuthenticated">User info</NuxtLink>
+          <a class="button--green" v-on:click="onLoginClick()" v-if="!isAuthenticated">Login</a>
+          <a class="button--green" v-on:click="onLogoutClick()" v-if="isAuthenticated">Log out {{ userName }}</a>
         </li>
       </ul>
     </nav>
@@ -20,12 +20,12 @@ import { validateAccess, oauthLoginCallback, oauthLogout, getUserInfo,
   isAuthenticated,
   oauthLogin,
   subscribeToAuthStateChanged, } from "../assets/auth";
+
 export default {
-  // middleware: 'authenticated',
   data() {
     return { 
       userName: "",
-      isLoggedIn: false
+      isAuthenticated: false
     }
   },
   methods: {
@@ -49,7 +49,7 @@ export default {
   },
   mounted() {
     isAuthenticated().then((isAuthenticated) => {
-      this.isLoggedIn = isAuthenticated;
+      this.isAuthenticated = isAuthenticated;
     }) 
     subscribeToAuthStateChanged((x) => this.authStateChanged());
   }

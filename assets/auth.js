@@ -10,19 +10,24 @@ const API_SCOPE = "api://7a22a9b5-1f83-432f-8d30-ef4412294cdf/All";
 const AUTHORIZE_URL = AUTH_DOMAIN + "/oauth2/v2.0/authorize";
 const TOKEN_URL = AUTH_DOMAIN + "/oauth2/v2.0/token";
 const LOGOUT_URL = AUTH_DOMAIN + "/oauth2/v2.0/logout";
+let initRedirectUri = "";
+if(!process.server) {
+    initRedirectUri = window.location.origin;
+  }
+
 const oktaAuth = new OktaAuth({
     issuer: ISSUER,
     clientId: CLIENT_ID,
     authorizeUrl: AUTHORIZE_URL,
     tokenUrl: TOKEN_URL,
-    redirectUri: "http://localhost:50752/oauth-callback",
+    redirectUri: initRedirectUri + "/oauth-callback",
     logoutUrl: LOGOUT_URL,
-    // postLogoutRedirectUri: location.origin,
+    postLogoutRedirectUri: initRedirectUri,
     // scopes: ['openid', 'profile'],
     scopes: ['openid', 'profile', API_SCOPE],
     responseType: 'code',
     pkce: true,
-    //devMode: true,
+    devMode: true,
     httpRequestClient: (method, url, options) => (url.indexOf('/.well-known/openid-configuration') >= 0
         // this is workaround for MS Identity Platform having no 'code_challenge_methods_supported' in openid metadata document
         // so we cheat a little. if we find that there is no 'code_chalenge_methods_supported' in metadata document
@@ -42,7 +47,11 @@ const oktaAuth = new OktaAuth({
         })
         // and this to force other calls to be without credentials (so no need for trudted origin - which MSIdP does not allow to set)    
         : fetchRequest(method, url, Object.assign(options, { withCredentials: false }))),
-    restoreOriginalUri: async (oktaAuth, originalUri) => { 
+    restoreOriginalUri: async (oktaAuth, originalUri) => {
+        if(!process.server) {
+            // initRedirectUri = window.location.origin;
+            window.location = initRedirectUri;
+          }
         // router.replace({ path: originalUri });
      }
 });
@@ -65,7 +74,7 @@ export function oauthLogin() {
         .then(authenticated => {
         if (!authenticated) {
             oktaAuth.tokenManager.clear();
-            
+            oktaAuth.setOriginalUri(initRedirectUri);
             // oktaAuth.setOriginalUri(router.currentRoute.value.path);
             oktaAuth.token.getWithRedirect();
         }
@@ -125,10 +134,6 @@ function handleAuthStateChange(authState) {
 if (oktaAuth.authStateManager) {
     oktaAuth.authStateManager.subscribe(handleAuthStateChange);
 }
-
-// console.log(oktaAuth);
-// console.log(oktaAuth.authStateManager);
-// console.log(oktaAuth.authStateManager.__proto__);
 
 export function subscribeToAuthStateChanged(handler) {
     handlers.push(handler);

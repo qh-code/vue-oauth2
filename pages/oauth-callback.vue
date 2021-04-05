@@ -6,12 +6,6 @@
         oauth2 login callback
       </h1>
 
-<div class="links">
-        <NuxtLink class="button--green" to="/">Home</NuxtLink>
-        <NuxtLink class="button--green" to="/user-info">User info</NuxtLink>
-        
-      </div>
-
 
     </div>
   </div>
@@ -23,7 +17,6 @@ import { validateAccess, oauthLoginCallback, oauthLogout, getUserInfo,
   oauthLogin,
   subscribeToAuthStateChanged, } from "../assets/auth";
 export default {
-  // middleware: 'authenticated',
   methods: {
     onLoginClick: () => {
       oauthLogin();
@@ -31,8 +24,6 @@ export default {
   },
   beforeMount() {
     oauthLoginCallback();
-    this.$router.push({ path: 'user-info' });
-    // window.location.replace("http://localhost:50752");
   }
 }
 </script>

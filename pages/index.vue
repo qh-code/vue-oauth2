@@ -38,7 +38,6 @@ import { validateAccess, oauthLoginCallback, oauthLogout, getUserInfo,
   oauthLogin,
   subscribeToAuthStateChanged, } from "../assets/auth";
 export default {
-  // middleware: 'authenticated',
   data() {
     return { isLoggedIn: false}
   }

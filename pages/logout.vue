@@ -2,15 +2,7 @@
   <div class="container">
     <div>
       <Logo />
-      <h1 class="title">
-        oauth2 login callback
-      </h1>
-
-<div class="links">
-        <NuxtLink class="button--green" to="/">Home</NuxtLink>
-        <NuxtLink class="button--green" to="/user-info">User info</NuxtLink>
-        
-      </div>
+      
 
 
     </div>
@@ -23,7 +15,6 @@ import { validateAccess, oauthLoginCallback, oauthLogout, getUserInfo,
   oauthLogin,
   subscribeToAuthStateChanged, } from "../assets/auth";
 export default {
-  // middleware: 'authenticated',
   methods: {
     onLoginClick: () => {
       oauthLogin();

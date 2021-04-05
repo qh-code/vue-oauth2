@@ -1,18 +1,59 @@
 <template>
   <div class="container">
     <div>
-      <Logo />
-      <h1 class="title">
-        User info
-      </h1>
-      
+      <div>My name is: {{ userName }}</div>
+      <div>
+        Test response from <em>{{ testEndpoint }}</em> is (see below):
+      </div>
+      <div align="left">
+        <pre>{{ testResponse }}</pre>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+const TEST_ENDPOINT = "http://localhost:8000/access-token-payload-test";
+import { validateAccess, oauthLoginCallback, oauthLogout, getUserInfo, getAccessToken,
+  isAuthenticated,
+  oauthLogin,
+  subscribeToAuthStateChanged, } from "../assets/auth";
+
 export default {
-    // middleware: 'authenticated'
+  data() {
+    return {
+      userName: "",
+      testResponse: "",
+      testEndpoint: TEST_ENDPOINT
+    }
+  },
+  methods: {
+  getFromTestEndpointAsString(token) {
+      return fetch(TEST_ENDPOINT, {
+        method: "GET",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then((response) => response.json())
+        .then((response) => JSON.stringify(response, null, 4))
+        .catch((err) => err);
+    }
+  },
+  mounted() {
+    getUserInfo()
+      .then((userInfo) => (this.userName = userInfo.name ? userInfo.name : ""))
+      .catch(() => {
+        this.$router.go(-1);
+      });
+
+    getAccessToken()
+      .then((token) => this.getFromTestEndpointAsString(token))
+      .then((testResponse) => (this.testResponse = testResponse))
+      .catch(console.error);
+  }
 }
 </script>
 

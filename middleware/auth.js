@@ -73,7 +73,6 @@ export function validateAccess(to, from, next) {
 export function oauthLogin() {
     oktaAuth.isAuthenticated()
         .then(authenticated => {
-            console.log(authenticated);
             if (!authenticated) {
                 oktaAuth.tokenManager.clear();
                 oktaAuth.setOriginalUri("router.currentRoute.path");
@@ -86,7 +85,6 @@ export function oauthLogin() {
 
 export function oauthLoginCallback() {
     if (oktaAuth.token) {
-        console.warn("in oktaAuth.token")
         // oktaAuth.token.parseFromUrl()
         //     .then(tokens => oktaAuth.handleLoginRedirect(tokens.tokens))
         //     .catch(console.error);

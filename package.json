@@ -11,6 +11,7 @@
   "dependencies": {
     "@okta/okta-auth-js": "^4.8.0",
     "core-js": "^3.9.1",
-    "nuxt": "^2.15.3"
+    "nuxt": "^2.15.3",
+    "vue-session": "^1.0.0"
   }
 }
