@@ -37,8 +37,7 @@ export default {
           Authorization: "Bearer " + token,
         },
       })
-        .then((response) => response.json())
-        .then((response) => JSON.stringify(response, null, 4))
+        .then((response) => response.text())
         .catch((err) => err);
     }
   },
