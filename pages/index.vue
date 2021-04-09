@@ -1,86 +1,66 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        oauth2-Nuxt
-      </h1>
-
-<!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/sample">Sample</router-link>
-      <template v-if="isAuthenticated">
-        | <router-link to="/logout">Logout {{ userName }}</router-link>
-      </template>
-      <template v-if="!isAuthenticated">
-        | <a v-on:click="onLoginClick()" href="#">Login</a>
-      </template>
-    </div> -->
-
-      <!-- <div class="links">
-        <NuxtLink class="button--green" to="/">Home</NuxtLink>
-        <NuxtLink class="button--green" to="/user-info" v-if="isLoggedIn">User info</NuxtLink>
-        <a class="button--green" v-on:click="onLoginClick()" v-if="!isLoggedIn">Login</a>
-        <a class="button--green" v-on:click="onLogoutClick()" v-if="isLoggedIn">Log out</a>
-        
-      </div> -->
-
-
-      <NuxtChild  />
-    </div>
+  <div>
+    <nuxt-link to="/learnMore" class="callToAction">Learn More</nuxt-link>
+    <nuxt-link to="/progress" class="callToAction" no-prefetch>Follow Our Progress</nuxt-link>
+    <h1 class="statement">The amazing new Widget is coming soon</h1>
+    <p class="subtext">It's revolutionary it will change the world of <UserAgent />  widgets as we know it.</p>
+    <p class="subtext">Be sure to sign-up to find out more about the next generation of widgets
+    and follow our progress</p>
   </div>
 </template>
 
 <script>
-import { validateAccess, oauthLoginCallback, oauthLogout, getUserInfo,
-  isAuthenticated,
-  oauthLogin,
-  subscribeToAuthStateChanged, } from "../assets/auth";
+import UserAgent from '../components/userAgent.vue'
 export default {
-  data() {
-    return { isLoggedIn: false}
+  components: {
+    UserAgent
+  },
+  mounted() {
+    console.log(this.$auth);
+
+
+    // busy: (...)
+      // callOnError: ƒ callOnError(error, payload = {})
+      // callOnRedirect: ƒ callOnRedirect(to, from)
+      // check: ƒ check(...args)
+    // constructor: class Auth
+      // fetchUser: fetchUser(...args) { if (!this.getStrategy().fetchUser) { return Promise.resolve(); } return Promise.resolve(this.getStrategy().fetchUser(...args)).catch((error) => {…}
+      // fetchUserOnce: ƒ fetchUserOnce(...args)
+      // getState: ƒ getState(key)
+      // getStrategy: ƒ getStrategy(throwException = true)
+      // hasScope: ƒ hasScope(scope)
+      // init: async init() { if (this.options.resetOnError) { this.onError((...args) => {…}
+    // loggedIn: (...)
+      // login: login(...args) { if (!this.getStrategy().login) { return Promise.resolve(); } return this.wrapLogin(this.getStrategy().login(...args)).catch((error) => {…}
+      // loginWith: loginWith(name, ...args) { return this.setStrategy(name).then(() => {…}
+      // logout: logout(...args) { if (!this.getStrategy().logout) { this.reset(); return Promise.resolve(); } return Promise.resolve(this.getStrategy().logout(...args)).catch((error) => {…}
+      // mounted: mounted(...args) { if (!this.getStrategy().mounted) { return this.fetchUserOnce(); } return Promise.resolve(this.getStrategy().mounted(...args)).catch((error) => {…}
+      // onError: ƒ onError(listener)
+      // onRedirect: ƒ onRedirect(listener)
+      // redirect: ƒ redirect(name, noRouter = false)
+      // refreshTokens: refreshTokens() { if (!this.getStrategy().refreshController) { return Promise.resolve(); } return Promise.resolve(this.getStrategy().refreshController.handleRefresh()).catch((error) => {…}
+      // registerStrategy: ƒ registerStrategy(name, strategy)
+      // request: request(endpoint, defaults = {}) { const _endpoint = typeof defaults === "object" ? Object.assign({}, defaults, endpoint) : endpoint; if (!this.ctx.app.$axios) { console.error("[AUTH] add the @nuxtjs/axios module to nuxt.config file"); return; } return this.ctx.app.$axios.request(_endpoint).catch((error) => {…}
+      // requestWith: ƒ requestWith(strategy, endpoint, defaults)
+      // reset: ƒ reset(...args)
+      // setStrategy: ƒ setStrategy(name)
+      // setUser: ƒ setUser(user)
+      // setUserToken: setUserToken(token, refreshToken) { if (!this.getStrategy().setUserToken) { this.getStrategy().token.set(token); return Promise.resolve(); } return Promise.resolve(this.getStrategy().setUserToken(token, refreshToken)).catch((error) => {…}
+    // state: (...)
+    // strategy: (...)
+    // user: (...)
+      // wrapLogin: wrapLogin(promise) { this.$storage.setState("busy", true); this.error = null; return Promise.resolve(promise).then((response) => {…}
+      // get busy: ƒ busy()
+      // get loggedIn: ƒ loggedIn()
+      // get state: ƒ state()
+      // get strategy: ƒ strategy()
+      // get user: ƒ user()
+    // __proto__: Object
+
+
   }
 }
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
 </style>

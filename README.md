@@ -1,4 +1,4 @@
-# oauth2-Nuxt
+# intro-to-nuxt
 
 ## Build Setup
 

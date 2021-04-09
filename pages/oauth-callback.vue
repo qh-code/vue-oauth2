@@ -1,70 +1,28 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        oauth2 login callback
-      </h1>
-
-
-    </div>
+  <div>
+    oauth callback
   </div>
 </template>
 
 <script>
-import { validateAccess, oauthLoginCallback, oauthLogout, getUserInfo,
-  isAuthenticated,
-  oauthLogin,
-  subscribeToAuthStateChanged, } from "../assets/auth";
 export default {
-  methods: {
-    onLoginClick: () => {
-      oauthLogin();
+    mounted: function(){
+    if(!this.$auth.loggedIn){
+		this.$auth.setToken(this.$route.query.code);
+    //   this.$auth.loginWith('cognito').then(() => {
+    //   })
+    //   this.$auth.mounted();
+      
+
+    
     }
-  },
-  beforeMount() {
-    oauthLoginCallback();
+    else {
+      console.log("in 3");
+      this.$router.push('/');
+    }
   }
 }
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
 </style>
