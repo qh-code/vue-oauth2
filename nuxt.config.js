@@ -20,7 +20,7 @@ const USER_INFO = AUTH_DOMAIN + "/oauth2/userInfo";
 
 // // const LOGOUT_URL = AUTH_DOMAIN + "/oauth2/v2.0/logout";
 // // const LOGOUT_URL = AUTH_DOMAIN + "/logout?client_id=" + CLIENT_ID + "&redirect_uri=http://localhost:8080&";
-// const LOGOUT_URL = AUTH_DOMAIN + "/logout";
+const LOGOUT_URL = AUTH_DOMAIN + "/logout";
 
 
 // const oktaAuth = new OktaAuth({
@@ -39,7 +39,6 @@ const USER_INFO = AUTH_DOMAIN + "/oauth2/userInfo";
 
 
 // var issuer = "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_CEDW1OT68",
-
 
 
 var clientId = "6lt9cqgtupflbjc868d0i61ucv";
@@ -86,62 +85,28 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/toast'
   ],
+
+  toast: {
+    position: 'top-right',
+    theme: "outline", 
+    duration : 5000,
+    register: [ // Register custom toasts
+      {
+        name: 'my-error',
+        message: 'Oops...Something went wrong',
+        options: {
+          type: 'error'
+        }
+      }
+    ]
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
-
-
-              
-              // https://www.youtube.com/watch?v=C-gUeHpeRrg
-
-
-              // // Modules: https://go.nuxtjs.dev/config-modules
-              // modules: [
-              //   // https://go.nuxtjs.dev/axios
-              //   '@nuxtjs/auth-next',
-              //   '@nuxtjs/axios',
-              // ],
-            
-              // // Axios module configuration: https://go.nuxtjs.dev/config-axios
-              // axios: {
-              //   baseURL: 'http://localhost:8000/api/v1'
-              // },
-            
-              // auth: {
-              //   strategies: {
-              //     local: {
-              //       scheme: 'refresh',
-              //       localStorage: {
-              //         prefix: 'auth.'
-              //       },
-              //       token: {
-              //         prefix: 'access_token.',
-              //         property: 'access_token',
-              //         maxAge: 86400,
-              //         type: 'Bearer'
-              //       },
-              //       refreshToken: {
-              //         prefix: 'refresh_token.',
-              //         property: 'refresh_token',
-              //         data: 'refresh_token',
-              //         maxAge: 60 * 60 * 24 * 15
-              //       },
-              //       user: {
-              //         property: 'user',
-              //         autoFetch: true
-              //       },
-              //       endpoints: {
-              //         login: { url: '/login', method: 'post'},
-              //         refresh: { url: '/token/refresh/', method: 'post' },
-              //         user: { url: '/user', method: 'get' },
-              //         logout: { url: '/logout', method: 'post'}
-              //       },
-              //     }
-              //   }
-              // },
 
   auth:{
     strategies:{
@@ -149,33 +114,17 @@ export default {
         scheme: 'oauth2',
         endpoints: {
           authorization: AUTHORIZE_URL,
-          // authorization: issuer +"/login",
           token: TOKEN_URL,
           userInfo: USER_INFO,
-          logout: { url: '/logout', method: 'post'}
-          // logout: issuer +"/v1/logout"
+          logout: LOGOUT_URL
         },
         token: {
           property: 'access_token',
           type: 'Bearer',
           maxAge: 1800,
         },
-        // token: {
-        //   property: 'access_token',
-        //   type: 'Bearer',
-        //   // maxAge: 1800,
-
-        //   property: 'access_token',
-        //   type: 'Bearer',
-        //   name: 'Authorization',
-        //   maxAge: 1800,
-        //   global: true,
-        //   prefix: '_token.',
-        //   expirationPrefix: '_token_expiration.'
-        // },
         
         responseType: 'code',
-        // 'code' | 'token' | 'id_token' | 'none' | string
         responseMode: 'query.jwt',
         grantType: 'authorization_code',
         clientId: clientId,
@@ -187,35 +136,7 @@ export default {
     }
   },
 
-
-  // auth:{
-  //   strategies:{
-  //     okta:{
-  //       scheme: 'oauth2',
-  //       endpoints: {
-  //         authorization: issuer +"/v1/authorize",
-  //         token: issuer +"/v1/token",
-  //         userInfo: issuer +"/v1/userinfo",
-  //         logout: issuer +"/v1/logout"
-  //       },
-  //       token: {
-  //         property: 'access_token',
-  //         type: 'Bearer',
-  //         maxAge: 1800,
-  //       },
-  //       responseType: 'code',
-  //       grantType: 'authorization_code',
-  //       clientId: clientId,
-  //       scope: ['openid', 'profile', 'email'],
-  //       codeChallengeMethod: 'S256',
-  //       autoLogout: true,
-  //       }
-  //   }
-  // },
-
   server: {
     port: 8080 // default: 3000
   }
-
-  
 }

@@ -10,8 +10,9 @@ export default {
     console.log("in 1");
     if(!this.$auth.loggedIn){
       console.log("in 2");
+      
       this.$auth.loginWith('cognito').then(() => {
-console.log("in 4");
+        console.log("in 4");
       })
       // this.$auth.mounted();
       // console.log(this.$auth);
@@ -21,7 +22,7 @@ console.log("in 4");
     }
     else {
       console.log("in 3");
-      this.$router.push('/')
+      this.$router.push('/');
     }
   }
 }
