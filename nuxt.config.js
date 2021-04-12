@@ -16,7 +16,7 @@ const AUTHORIZE_URL = AUTH_DOMAIN + "/oauth2/authorize";
 
 // // const TOKEN_URL = AUTH_DOMAIN + "/oauth2/v2.0/token";
 const TOKEN_URL = AUTH_DOMAIN + "/oauth2/token";
-const USER_INFO = AUTH_DOMAIN + "/oauth2/userinfo";
+const USER_INFO = AUTH_DOMAIN + "/oauth2/userInfo";
 
 // // const LOGOUT_URL = AUTH_DOMAIN + "/oauth2/v2.0/logout";
 // // const LOGOUT_URL = AUTH_DOMAIN + "/logout?client_id=" + CLIENT_ID + "&redirect_uri=http://localhost:8080&";
@@ -28,7 +28,7 @@ const USER_INFO = AUTH_DOMAIN + "/oauth2/userinfo";
 //     clientId: CLIENT_ID,
 //     authorizeUrl: AUTHORIZE_URL,
 //     tokenUrl: TOKEN_URL,
-//     redirectUri: location.origin + "/oauth-callback",
+//     redirectUri: location.origin + "/login",
 //     logoutUrl: LOGOUT_URL,
 //     // postLogoutRedirectUri: location.origin,
 //     scopes: ['openid', 'profile'],
@@ -158,16 +158,21 @@ export default {
         token: {
           property: 'access_token',
           type: 'Bearer',
-          // maxAge: 1800,
-
-          property: 'access_token',
-          type: 'Bearer',
-          name: 'Authorization',
           maxAge: 1800,
-          global: true,
-          prefix: '_token.',
-          expirationPrefix: '_token_expiration.'
         },
+        // token: {
+        //   property: 'access_token',
+        //   type: 'Bearer',
+        //   // maxAge: 1800,
+
+        //   property: 'access_token',
+        //   type: 'Bearer',
+        //   name: 'Authorization',
+        //   maxAge: 1800,
+        //   global: true,
+        //   prefix: '_token.',
+        //   expirationPrefix: '_token_expiration.'
+        // },
         
         responseType: 'code',
         // 'code' | 'token' | 'id_token' | 'none' | string
@@ -177,7 +182,7 @@ export default {
         scope: ['openid', 'profile'],
         codeChallengeMethod: 'S256',
         autoLogout: false,
-        redirectUri: "http://localhost:8080/oauth-callback"
+        redirectUri: "http://localhost:8080/login"
         }
     }
   },

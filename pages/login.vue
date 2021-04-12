@@ -22,7 +22,6 @@ console.log("in 4");
     else {
       console.log("in 3");
       this.$router.push('/')
-      
     }
   }
 }
