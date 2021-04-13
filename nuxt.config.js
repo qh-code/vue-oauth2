@@ -47,7 +47,7 @@ var issuer = "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_CEDW1OT68";
 
 export default {
   // Target: https://go.nuxtjs.dev/config-target
-  target: 'static',
+  target: 'server',
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
